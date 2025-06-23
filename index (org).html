@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Portfólio yErik</title>
+
+<!-- Fontes e ícones -->
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600&family=Roboto&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+
+<script src="https://cdn.jsdelivr.net/npm/tsparticles@2.11.1/tsparticles.bundle.min.js"></script>
+
+<style>
+  /* Reset */
+  * {
+    margin: 0; padding: 0; box-sizing: border-box;
+  }
+  html, body {
+    height: 100%;
+    font-family: 'Roboto', sans-serif;
+    background: linear-gradient(135deg, #1b0034, #4a006e);
+    color: #eee;
+    overflow-x: hidden;
+    scroll-behavior: smooth;
+    cursor: url('data:image/svg+xml;utf8,<svg fill="purple" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="10"/></svg>') 12 12, auto;
+  }
+
+  /* Loader */
+  #loader {
+    position: fixed;
+    top: 0; left: 0; right:0; bottom:0;
+    background: #1b0034;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    z-index: 9999;
+    color: #d28fff;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 1.8rem;
+    letter-spacing: 0.1em;
+    user-select: none;
+  }
+  #loader .spinner {
+    margin-top: 1rem;
+    width: 60px; height: 60px;
+    border: 6px solid #7f3fff55;
+    border-top-color: #d28fff;
+    border-radius: 50%;
+    animation: girar 1.2s linear infinite;
+  }
+  @keyframes girar {
+    to { transform: rotate(360deg); }
+  }
+
+  /* Nav */
+  nav {
+    position: fixed;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100%;
+    max-width: 1000px;
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+    background: rgba(40 0 70 / 0.6);
+    padding: 1rem 0;
+    z-index: 20;
+    backdrop-filter: saturate(180%) blur(10px);
+    border-bottom: 1px solid #d28fff55;
+    border-radius: 0 0 20px 20px;
+    box-shadow: 0 4px 20px #d28fff55;
+    transition: background 0.3s ease;
+  }
+  nav.scrolled {
+    background: rgba(40 0 70 / 0.8);
+    box-shadow: 0 6px 30px #d28fffbb;
+  }
+  nav button {
+    background: transparent;
+    border: none;
+    color: #ccc;
+    font-weight: 700;
+    font-size: 1rem;
+    cursor: pointer;
+    position: relative;
+    padding: 0.5rem 1rem;
+    text-transform: uppercase;
+    transition: color 0.3s ease;
+    user-select: none;
+    letter-spacing: 0.05em;
+  }
+  nav button::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 0%;
+    height: 3px;
+    background: #d28fff;
+    transition: width 0.3s ease;
+    border-radius: 2px;
+  }
+  nav button:hover::after,
+  nav button.active::after {
+    width: 100%;
+  }
+  nav button.active {
+    color: #fff;
+    text-shadow:
+      0 0 5px #d28fff,
+      0 0 15px #d28fff,
+      0 0 25px #d28fff;
+  }
+
+  /* Container geral */
+  #container {
+    width: 100%;
+    min-height: 100vh;
+    padding: 5rem 1rem 3rem;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    text-align: center;
+    flex-direction: column;
+    max-width: 900px;
+    margin: 0 auto;
+  }
+
+  /* Seções */
+  section {
+    display: none;
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.8s ease, transform 0.8s ease;
+  }
+  section.active {
+    display: block;
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* Títulos com digitação */
+  h1 {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 3rem;
+    margin-bottom: 1.5rem;
+    color: #e6ccff;
+    text-shadow:
+      0 0 10px #c27fff,
+      0 0 20px #d28fff,
+      0 0 40px #d28fff;
+    user-select: none;
+  }
+  .digitando::after {
+    content: "|";
+    animation: piscar 1s infinite;
+    color: #d28fff;
+  }
+  @keyframes piscar {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0; }
+  }
+
+  /* Parágrafos */
+  p {
+    font-size: 1.25rem;
+    color: #ddd;
+    line-height: 1.7;
+    background: rgba(70 0 120 / 0.15);
+    padding: 1.2rem 2rem;
+    border-radius: 20px;
+    backdrop-filter: saturate(180%) blur(10px);
+    box-shadow: 0 0 15px #d28fff60;
+    max-width: 720px;
+    margin: 0 auto 2rem;
+    user-select: text;
+    transition: background 0.3s ease;
+  }
+  p:hover {
+    background: rgba(90 0 160 / 0.3);
+  }
+
+  /* Botões de projetos */
+  .projetos-buttons {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-bottom: 2rem;
+  }
+  .projetos-buttons button {
+    background: rgba(255 255 255 / 0.04);
+    color: #d28fff;
+    border: 1.5px solid #d28fff;
+    padding: 0.9rem 2rem;
+    border-radius: 18px;
+    font-size: 1.2rem;
+    cursor: pointer;
+    transition:
+      background 0.4s ease,
+      box-shadow 0.4s ease,
+      color 0.3s ease;
+    backdrop-filter: blur(8px);
+    user-select: none;
+    box-shadow: inset 0 0 5px #d28fff60;
+  }
+  .projetos-buttons button:hover,
+  .projetos-buttons button.active {
+    background: #d28fff;
+    color: #1a001f;
+    box-shadow:
+      0 0 20px #d28fff,
+      inset 0 0 15px #b164ff;
+  }
+
+  /* Video list */
+  .video-list {
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 2rem;
+  }
+  .video-list.active {
+    display: flex;
+  }
+  .video-wrapper {
+    position: relative;
+    width: 90%;
+    max-width: 720px;
+    padding-top: 56.25%;
+    margin-bottom: 2.5rem;
+    box-shadow:
+      0 0 15px #b07fff,
+      0 0 40px #d28fff50;
+    border-radius: 20px;
+    overflow: hidden;
+    border: 3px solid #d28fffcc;
+    transition: box-shadow 0.4s ease;
+  }
+  .video-wrapper:hover {
+    box-shadow:
+      0 0 20px #cfa0ff,
+      0 0 60px #d28fffcc;
+  }
+  .video-wrapper iframe {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    border: none;
+    border-radius: 20px;
+  }
+
+  /* Voltar ao topo */
+  #btnTopo {
+    position: fixed;
+    right: 30px;
+    bottom: 40px;
+    background: #d28fff;
+    border: none;
+    padding: 0.9rem 1.2rem;
+    border-radius: 50%;
+    cursor: pointer;
+    box-shadow:
+      0 0 15px #d28fff,
+      0 0 25px #b377ff99;
+    font-size: 1.8rem;
+    color: #1a001f;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.4s ease, transform 0.3s ease;
+    z-index: 30;
+  }
+  #btnTopo.show {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateY(0);
+  }
+  #btnTopo:hover {
+    box-shadow:
+      0 0 25px #d28fff,
+      0 0 40px #c48aff;
+    transform: scale(1.1);
+  }
+
+  /* Rodapé com redes sociais */
+  footer {
+    margin-top: 3rem;
+    text-align: center;
+    color: #c7b9dc;
+    font-size: 1rem;
+    user-select: none;
+    padding: 1.5rem 0;
+    background: linear-gradient(90deg, #3c0047, #6a0089);
+    box-shadow:
+      inset 0 0 20px #d28fff55;
+    border-radius: 20px 20px 0 0;
+  }
+  .redes {
+    margin-top: 0.7rem;
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+  }
+  .redes a {
+    color: #d28fff;
+    font-size: 2rem;
+    transition: color 0.3s ease, transform 0.3s ease;
+    user-select: none;
+  }
+  .redes a:hover {
+    color: #fff;
+    text-shadow:
+      0 0 10px #d28fff,
+      0 0 25px #d28fff,
+      0 0 40px #c18aff;
+    transform: scale(1.2);
+  }
+
+  /* Responsividade */
+  @media (max-width: 768px) {
+    h1 {
+      font-size: 2.4rem;
+    }
+    p {
+      font-size: 1.1rem;
+      padding: 1rem 1.2rem;
+      max-width: 100%;
+    }
+    .projetos-buttons button {
+      font-size: 1rem;
+      padding: 0.7rem 1.5rem;
+    }
+    #btnTopo {
+      right: 15px;
+      bottom: 20px;
+      font-size: 1.4rem;
+    }
+  }
+</style>
+</head>
+<body>
+
+<!-- Loader -->
+<div id="loader">
+  Carregando o portfólio...
+  <div class="spinner"></div>
+</div>
+
+<!-- Fundo animado -->
+<div id="tsparticles"></div>
+
+<!-- Música de fundo -->
+<audio autoplay loop>
+  <source src="https://cdn.pixabay.com/audio/2023/03/21/audio_05d5ae151b.mp3" type="audio/mpeg" />
+</audio>
+
+<!-- Navegação -->
+<nav>
+  <button class="active" data-section="home">Início</button>
+  <button data-section="sobre">Sobre</button>
+  <button data-section="projetos">Projetos</button>
+  <button data-section="contato">Contato</button>
+</nav>
+
+<!-- Conteúdo -->
+<div id="container">
+  <section id="home" class="active">
+    <h1><span class="digitando" data-text="☆SEJA BEM VINDO AO PORTFÓLIO DO yErik!☆"></span></h1>
+    <p>Explore este site para conhecer melhor meu trabalho como desenvolvedor.</p>
+  </section>
+
+  <section id="sobre">
+    <h1><span class="digitando" data-text="Sobre Mim"></span></h1>
+    <p>Sou programador com foco em Luau e HTML. Crio sistemas funcionais no Roblox Studio e interfaces modernas para sites. Busco sempre unir criatividade, clareza e tecnologia em cada projeto.</p>
+  </section>
+
+  <section id="projetos">
+    <h1><span class="digitando" data-text="Projetos"></span></h1>
+    <div class="projetos-buttons">
+      <button id="btn-html" onclick="mostrarVideos('html')" class="active">HTML</button>
+      <button id="btn-lua" onclick="mostrarVideos('lua')">Luau</button>
+    </div>
+    <div id="videos-html" class="video-list active">
+      <div class="video-wrapper">
+        <iframe src="https://www.youtube.com/embed/MFDl7LgkxiY" allowfullscreen></iframe>
+      </div>
+    </div>
+    <div id="videos-lua" class="video-list">
+      <div class="video-wrapper">
+        <iframe src="https://www.youtube.com/embed/NOME_DO_VIDEO_2" allowfullscreen></iframe>
+      </div>
+    </div>
+  </section>
+
+  <section id="contato">
+    <h1><span class="digitando" data-text="Contato"></span></h1>
+    <p>📩 Me chama no Discord: <strong>y_erik</strong><br />Disponível para parcerias, dúvidas ou troca de ideias 😎</p>
+    <div class="redes" aria-label="Redes sociais">
+      <a href="https://discord.com/users/y_erik" target="_blank" title="Discord" rel="noopener noreferrer"><i class="fab fa-discord"></i></a>
+      <a href="https://github.com/yErik" target="_blank" title="GitHub" rel="noopener noreferrer"><i class="fab fa-github"></i></a>
+      <a href="https://www.linkedin.com/me?trk=p_mwlite_profile_view-secondary_nav" target="_blank" title="LinkedIn" rel="noopener noreferrer"><i class="fab fa-linkedin"></i></a>
+    </div>
+  </section>
+</div>
+
+<!-- Botão voltar ao topo -->
+<button id="btnTopo" title="Voltar ao topo" aria-label="Voltar ao topo"><i class="fas fa-chevron-up"></i></button>
+
+<footer>
+  <p>© 2025 yErik - Todos os direitos reservados.</p>
+</footer>
+
+<script>
+  // Loader simples
+  window.addEventListener("load", () => {
+    const loader = document.getElementById("loader");
+    loader.style.opacity = 0;
+    setTimeout(() => loader.style.display = "none", 600);
+
+    // Inicia digitação da home
+    digitarTexto(document.getElementById("home"));
+  });
+
+  // Navegação entre seções com transição suave
+  const navButtons = document.querySelectorAll("nav button");
+  const sections = document.querySelectorAll("section");
+
+  navButtons.forEach(btn => {
+    btn.addEventListener("click", () => {
+      navButtons.forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+
+      sections.forEach(sec => {
+        sec.classList.remove("active");
+        if (sec.id === btn.dataset.section) {
+          sec.classList.add("active");
+          digitarTexto(sec);
+          revealSection(sec);
+        }
+      });
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    });
+  });
+
+  // Mostrar vídeos projetos
+  function mostrarVideos(tipo) {
+    document.getElementById('btn-html').classList.remove('active');
+    document.getElementById('btn-lua').classList.remove('active');
+    document.getElementById(`btn-${tipo}`).classList.add('active');
+
+    document.getElementById('videos-html').classList.remove('active');
+    document.getElementById('videos-lua').classList.remove('active');
+    document.getElementById(`videos-${tipo}`).classList.add('active');
+  }
+
+  // Efeito digitar nos títulos
+  function digitarTexto(section) {
+    const span = section.querySelector(".digitando");
+    if (!span) return;
+
+    const texto = span.dataset.text;
+    span.textContent = "";
+    let i = 0;
+
+    function escrever() {
+      if (i < texto.length) {
+        span.textContent += texto.charAt(i);
+        i++;
+        setTimeout(escrever, 60);
+      }
+    }
+
+    escrever();
+  }
+
+  // Scroll reveal simples para seções
+  function revealSection(section) {
+    section.style.opacity = 0;
+    section.style.transform = "translateY(30px)";
+    setTimeout(() => {
+      section.style.opacity = 1;
+      section.style.transform = "translateY(0)";
+      section.style.transition = "opacity 0.7s ease, transform 0.7s ease";
+    }, 50);
+  }
+
+  // Botão voltar ao topo
+  const btnTopo = document.getElementById("btnTopo");
+  window.addEventListener("scroll", () => {
+    if (window.scrollY > 300) {
+      btnTopo.classList.add("show");
+      document.querySelector("nav").classList.add("scrolled");
+    } else {
+      btnTopo.classList.remove("show");
+      document.querySelector("nav").classList.remove("scrolled");
+    }
+  });
+
+  btnTopo.addEventListener("click", () => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  });
+
+  // Partículas fundo
+  tsParticles.load("tsparticles", {
+    particles: {
+      number: { value: 70, density: { enable: true, area: 800 } },
+      size: { value: 2 },
+      move: { enable: true, speed: 0.5 },
+      opacity: { value: 0.2 },
+      color: { value: "#d28fff" },
+      line_linked: { enable: true, distance: 150, color: "#d28fff", opacity: 0.1 },
+    },
+    background: { color: "transparent" },
+  });
